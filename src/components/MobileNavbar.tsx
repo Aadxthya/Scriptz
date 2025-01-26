@@ -24,6 +24,7 @@ function MobileNavbar() {
 
   return (
     <div className="flex md:hidden items-center space-x-2">
+      {/* Theme Toggle */}
       <Button
         variant="ghost"
         size="icon"
@@ -35,6 +36,7 @@ function MobileNavbar() {
         <span className="sr-only">Toggle theme</span>
       </Button>
 
+      {/* Mobile Menu */}
       <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -46,6 +48,7 @@ function MobileNavbar() {
             <SheetTitle>Menu</SheetTitle>
           </SheetHeader>
           <nav className="flex flex-col space-y-4 mt-6">
+            {/* Home Link */}
             <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
               <Link href="/">
                 <HomeIcon className="w-4 h-4" />
@@ -53,6 +56,7 @@ function MobileNavbar() {
               </Link>
             </Button>
 
+            {/* Conditional Links for Signed In Users */}
             {isSignedIn ? (
               <>
                 <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
@@ -62,11 +66,12 @@ function MobileNavbar() {
                   </Link>
                 </Button>
 
-                {/* Profile Link Updated with Username */}
                 <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
-                  <Link href={`/profile/${user?.username ?? user?.emailAddresses[0].emailAddress.split("@")[0]}`}>
+                  <Link
+                    href={`/profile/${user?.username || user?.emailAddresses[0]?.emailAddress.split("@")[0]}`}
+                  >
                     <UserIcon className="w-4 h-4" />
-                    Profile
+                    <span className="hidden lg:inline">Profile</span>
                   </Link>
                 </Button>
 
