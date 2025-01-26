@@ -3,12 +3,13 @@
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { Card, CardContent } from "./ui/card";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import { Textarea } from "./ui/textarea";
 import { createPost } from "@/actions/post.action";
 import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
+import ImageUpload from "./ImageUpload";  // Correct import for ImageUpload
 
 export default function CreatePost() {
   const { user } = useUser();
@@ -25,7 +26,7 @@ export default function CreatePost() {
     try {
       const result = await createPost(content, imageUrl);
       if (result?.success) {
-        // reset the form
+        // Reset the form
         setContent("");
         setImageUrl("");
         setShowImageUpload(false);
@@ -44,6 +45,7 @@ export default function CreatePost() {
     <Card className="mb-6">
       <CardContent className="pt-6">
         <div className="space-y-4">
+          {/* User Avatar and Textarea */}
           <div className="flex space-x-4">
             <Avatar className="w-10 h-10">
               <AvatarImage src={user?.imageUrl || "/avatar.png"} />
@@ -57,6 +59,21 @@ export default function CreatePost() {
             />
           </div>
 
+          {/* Image Upload Section */}
+          {(showImageUpload || imageUrl) && (
+            <div className="border rounded-lg p-4">
+              <ImageUpload
+                endpoint="imageUploader"  // Match the endpoint defined in core.tsx
+                value={imageUrl}
+                onChange={(url) => {
+                  setImageUrl(url);
+                  if (!url) setShowImageUpload(false);
+                }}
+              />
+            </div>
+          )}
+
+          {/* Footer with Actions */}
           <div className="flex items-center justify-between border-t pt-4">
             <div className="flex space-x-2">
               <Button
@@ -67,7 +84,7 @@ export default function CreatePost() {
                 onClick={() => setShowImageUpload(!showImageUpload)}
                 disabled={isPosting}
               >
-                <ImageIcon className="size-4 mr-2" />
+                <ImageIcon className="w-4 h-4 mr-2" />
                 Photo
               </Button>
             </div>
@@ -78,31 +95,18 @@ export default function CreatePost() {
             >
               {isPosting ? (
                 <>
-                  <Loader2Icon className="size-4 mr-2 animate-spin" />
+                  <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
                   Posting...
                 </>
               ) : (
                 <>
-                  <SendIcon className="size-4 mr-2" />
+                  <SendIcon className="w-4 h-4 mr-2" />
                   Post
                 </>
               )}
             </Button>
           </div>
         </div>
-
-        {showImageUpload && (
-          <div className="mt-4">
-            <input
-              type="text"
-              placeholder="Enter image URL"
-              className="w-full p-2 border rounded-md"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              disabled={isPosting}
-            />
-          </div>
-        )}
       </CardContent>
     </Card>
   );
