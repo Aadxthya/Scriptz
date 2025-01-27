@@ -10,9 +10,8 @@ import {
   UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
-import { useAuth, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { useAuth, SignInButton, SignOutButton } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
@@ -20,7 +19,6 @@ function MobileNavbar() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { isSignedIn } = useAuth();
   const { theme, setTheme } = useTheme();
-  const { user } = useUser(); // Fetch user details
 
   return (
     <div className="flex md:hidden items-center space-x-2">
@@ -37,61 +35,61 @@ function MobileNavbar() {
       </Button>
 
       {/* Mobile Menu */}
-      <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <MenuIcon className="h-5 w-5" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="right" className="w-[300px]">
-          <SheetHeader>
-            <SheetTitle>Menu</SheetTitle>
-          </SheetHeader>
-          <nav className="flex flex-col space-y-4 mt-6">
-            {/* Home Link */}
-            <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
-              <Link href="/">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
+      >
+        <MenuIcon className="h-5 w-5" />
+      </Button>
+      {showMobileMenu && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-end">
+          <div className="w-[300px] bg-white p-6 shadow-lg">
+            <h2 className="text-lg font-bold">Menu</h2>
+            <nav className="mt-4 flex flex-col space-y-4">
+              <Link href="/" className="text-blue-500 flex items-center gap-2">
                 <HomeIcon className="w-4 h-4" />
                 Home
               </Link>
-            </Button>
-
-            {/* Conditional Links for Signed In Users */}
-            {isSignedIn ? (
-              <>
-                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
-                  <Link href="/notifications">
+              {isSignedIn ? (
+                <>
+                  <Link
+                    href="/notifications"
+                    className="text-blue-500 flex items-center gap-2"
+                  >
                     <BellIcon className="w-4 h-4" />
                     Notifications
                   </Link>
-                </Button>
-
-                <Button variant="ghost" className="flex items-center gap-3 justify-start" asChild>
                   <Link
-                    href={`/profile/${user?.username || user?.emailAddresses[0]?.emailAddress.split("@")[0]}`}
+                    href="/profile"
+                    className="text-blue-500 flex items-center gap-2"
                   >
                     <UserIcon className="w-4 h-4" />
-                    <span className="hidden lg:inline">Profile</span>
+                    Profile
                   </Link>
-                </Button>
-
-                <SignOutButton>
-                  <Button variant="ghost" className="flex items-center gap-3 justify-start w-full">
-                    <LogOutIcon className="w-4 h-4" />
-                    Logout
-                  </Button>
-                </SignOutButton>
-              </>
-            ) : (
-              <SignInButton mode="modal">
-                <Button variant="default" className="w-full">
-                  Sign In
-                </Button>
-              </SignInButton>
-            )}
-          </nav>
-        </SheetContent>
-      </Sheet>
+                  <SignOutButton>
+                    <Button variant="ghost" className="flex items-center gap-2">
+                      <LogOutIcon className="w-4 h-4" />
+                      Logout
+                    </Button>
+                  </SignOutButton>
+                </>
+              ) : (
+                <SignInButton mode="modal">
+                  <Button variant="default">Sign In</Button>
+                </SignInButton>
+              )}
+            </nav>
+            <Button
+              variant="ghost"
+              className="mt-6 w-full"
+              onClick={() => setShowMobileMenu(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
