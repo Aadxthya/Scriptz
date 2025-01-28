@@ -10,6 +10,7 @@ import {
   UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { useAuth, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
@@ -22,7 +23,7 @@ function MobileNavbar() {
   const { user } = useUser();
 
   return (
-    <div className="flex md:hidden items-center space-x-2">
+    <div className="flex md:hidden items-center gap-2">
       {/* Theme Toggle */}
       <Button
         variant="ghost"
@@ -34,73 +35,83 @@ function MobileNavbar() {
         <span className="sr-only">Toggle theme</span>
       </Button>
 
-      {/* Mobile Menu Toggle */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => setShowMobileMenu(!showMobileMenu)}
-      >
-        <MenuIcon className="h-5 w-5" />
-      </Button>
-
       {/* Mobile Menu */}
-      {showMobileMenu && (
-        <div className="fixed inset-0 z-50 bg-black flex justify-end"> 
-          {/* Changed bg-black bg-opacity-95 to bg-black */}
-          <div className="w-[260px] p-4">
-            <h2 className="text-lg font-semibold mb-4 text-white">Menu</h2>
-            <nav className="flex flex-col space-y-3">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-white hover:bg-gray-700 rounded-md p-2 transition-all"
-              >
-                <HomeIcon className="w-5 h-5" />
-                Home
-              </Link>
-              {isSignedIn ? (
-                <>
-                  <Link
-                    href="/notifications"
-                    className="flex items-center gap-2 text-white hover:bg-gray-700 rounded-md p-2 transition-all"
-                  >
-                    <BellIcon className="w-5 h-5" />
-                    Notifications
-                  </Link>
-                  <Link
-                    href={`/profile/${user?.username || user?.emailAddresses[0]?.emailAddress.split("@")[0]}`}
-                    className="flex items-center gap-2 text-white hover:bg-gray-700 rounded-md p-2 transition-all"
-                  >
-                    <UserIcon className="w-5 h-5" />
-                    Profile
-                  </Link>
-                  <SignOutButton>
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-2 text-white hover:bg-gray-700 rounded-md p-2 transition-all"
-                    >
-                      <LogOutIcon className="w-5 h-5" />
-                      Logout
-                    </Button>
-                  </SignOutButton>
-                </>
-              ) : (
-                <SignInButton mode="modal">
-                  <Button variant="default" className="w-full">
-                    Sign In
-                  </Button>
-                </SignInButton>
-              )}
-            </nav>
-            <Button
-              variant="ghost"
-              className="mt-6 w-full text-white hover:bg-gray-700 rounded-md p-2 transition-all"
+      <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <MenuIcon className="h-5 w-5" />
+            <span className="sr-only">Open menu</span>
+          </Button>
+        </SheetTrigger>
+        
+        <SheetContent side="right" className="w-[280px]">
+          <SheetHeader className="text-left">
+            <SheetTitle>Menu</SheetTitle>
+          </SheetHeader>
+          
+          <nav className="flex flex-col gap-2 mt-6">
+            <Button 
+              asChild
+              variant="ghost" 
+              className="w-full justify-start gap-3 px-4 py-6"
               onClick={() => setShowMobileMenu(false)}
             >
-              Close
+              <Link href="/">
+                <HomeIcon className="h-5 w-5" />
+                Home
+              </Link>
             </Button>
-          </div>
-        </div>
-      )}
+
+            {isSignedIn ? (
+              <>
+                <Button 
+                  asChild
+                  variant="ghost" 
+                  className="w-full justify-start gap-3 px-4 py-6"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <Link href="/notifications">
+                    <BellIcon className="h-5 w-5" />
+                    Notifications
+                  </Link>
+                </Button>
+
+                <Button 
+                  asChild
+                  variant="ghost" 
+                  className="w-full justify-start gap-3 px-4 py-6"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <Link href={`/profile/${user?.username || user?.emailAddresses[0]?.emailAddress.split("@")[0]}`}>
+                    <UserIcon className="h-5 w-5" />
+                    Profile
+                  </Link>
+                </Button>
+
+                <SignOutButton>
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start gap-3 px-4 py-6 text-destructive hover:text-destructive/80"
+                  >
+                    <LogOutIcon className="h-5 w-5" />
+                    Logout
+                  </Button>
+                </SignOutButton>
+              </>
+            ) : (
+              <SignInButton mode="modal">
+                <Button 
+                  variant="default" 
+                  className="w-full mt-4"
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  Sign In
+                </Button>
+              </SignInButton>
+            )}
+          </nav>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
