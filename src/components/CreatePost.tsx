@@ -43,7 +43,7 @@ export default function CreatePost() {
 
   return (
     <Card className="mb-6">
-      <CardContent className="pt-6">
+      <CardContent className="pt-4">
         <div className="space-y-4">
           {/* User Avatar and Textarea */}
           <div className="flex space-x-4">
@@ -52,7 +52,7 @@ export default function CreatePost() {
             </Avatar>
             <Textarea
               placeholder="What's on your mind?"
-              className="min-h-[100px] resize-none border-none focus-visible:ring-0 p-0 text-base"
+              className="min-h-[30px] resize-none border-none focus-visible:ring-0 p-0 text-base"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               disabled={isPosting}
